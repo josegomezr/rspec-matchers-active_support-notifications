@@ -76,4 +76,35 @@ RSpec.describe Rspec::Matchers::ActiveSupport::Notifications do
       expect {}.to emit_event(/.+\.lib$/).exactly(0).times
     end
   end
+
+  context "when filtering using #with" do
+    let(:event) { "my_event.lib" }
+    let(:code) do
+      lambda {
+        ::ActiveSupport::Notifications.instrument(event, {key: :value})
+        ::ActiveSupport::Notifications.instrument(event, {key: :anothervalue})
+      }
+    end
+
+    it "emits two events" do
+      expect { code.call }.to emit_event(/.+\.lib$/).twice
+    end
+
+    it "matches once with payload filter" do
+      expect { code.call }.to emit_event(/.+\.lib$/).with({key: :value}).exactly(:once)
+    end
+
+    context "partial matches" do
+      let(:code) do
+        lambda {
+          ::ActiveSupport::Notifications.instrument(event, {key: :value, num: 1})
+          ::ActiveSupport::Notifications.instrument(event, {key: :anothervalue, num: 3})
+        }
+      end
+
+      it "matches once with payload filter" do
+        expect { code.call }.to emit_event(/.+\.lib$/).with(hash_including(num: 3)).exactly(:once)
+      end
+    end
+  end
 end

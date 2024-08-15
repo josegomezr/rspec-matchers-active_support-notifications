@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    rspec-matchers-active_support-notifications (0.1.0)
+    rspec-matchers-active_support-notifications (0.1.1)
       activesupport (>= 6.0)
-      rspec-core (~> 3)
+      rspec (~> 3)
 
 GEM
   remote: https://rubygems.org/

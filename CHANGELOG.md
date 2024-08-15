@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.1.1] - 2024-08-15
+
+- `emit_event` now accepts `#with` for event payload filtering. Even with
+  partial matches using `hash_including`.
+
 ## [0.1.0] - 2024-08-15
 
 - Initial release

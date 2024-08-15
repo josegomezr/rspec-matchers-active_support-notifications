@@ -33,6 +33,13 @@ module Rspec
 
           def supports_block_expectations? = true
 
+          def with(*args)
+            tap do
+              @arg_matcher = RSpec::Mocks::ArgumentListMatcher.new(*args)
+            end
+          end
+          ruby2_keywords(:with) if respond_to?(:ruby2_keywords, true)
+
           def does_not_match?(target)
             raise NegationNotSupportedError.new <<~MSG.squish
               Using the `emit_event` matcher in negation may bring surprising
@@ -40,9 +47,16 @@ module Rspec
             MSG
           end
 
+          def event_payload_matches?(payload)
+            @arg_matcher.nil? || @arg_matcher.args_match?(**payload)
+          end
+
           def matches?(target)
             captured = Hash.new { 0 }
-            handler = lambda { |name, *_| captured[name] += 1 }
+            handler = lambda { |*args|
+              event = ::ActiveSupport::Notifications::Event.new(*args)
+              captured[event.name] += 1 if event_payload_matches?(event.payload)
+            }
 
             ::ActiveSupport::Notifications.subscribed(handler, @expected, &target)
 
