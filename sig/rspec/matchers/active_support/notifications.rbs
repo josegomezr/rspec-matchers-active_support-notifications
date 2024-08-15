@@ -1,0 +1,30 @@
+module Rspec
+  module Matchers
+    module ActiveSupport
+      module Notifications
+        VERSION: String
+        def emit_event : (expected : String | Regexp) -> Matcher
+
+        class Matcher
+          def initialize : (expected: String | Regexp) -> Matcher
+          def exactly : (count: Integer) -> self
+          def at_least : (count: Integer) -> self
+          def at_most : (count: Integer) -> self
+          def times : () -> self
+          def once : () -> self
+          def twice : () -> self
+          def thrice : () -> self
+          def supports_block_expectations? : () -> bool
+          def does_not_match? : (target: Proc) -> nil
+          def matches? : (target: Proc) -> bool
+          def failure_message : () -> String
+          def failure_message_when_negated : () -> String
+          def set_expected_number : (relativity: Symbol, count: Integer) -> nil
+        end
+
+        class NegationNotSupportedError < StandardError
+        end
+      end
+    end
+  end
+end
